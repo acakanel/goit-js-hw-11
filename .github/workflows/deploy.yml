@@ -6,31 +6,25 @@ on:
       - main
 
 jobs:
-  build-deploy:
+  build-and-deploy:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write # Ensure write permissions for contents
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
 
+      - name: Install dependencies
+        run: npm install
+
       - name: Build project
-        run: |
-          # Your build commands here
-          npm install
-          npm run build
+        run: npm run build
 
       - name: Deploy to GitHub Pages
-        env:
-          GH_PAT: ${{ secrets.GH_PAT }}
         run: |
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git config --global user.name "github-actions[bot]"
-          git remote set-url origin https://acakanel:${GH_PAT}@github.com/acakanel/goit-js-hw-11.git
-          git fetch
-          git worktree add gh-pages-deploy-action github-pages-deploy-action-temp-deployment-folder
-          cd github-pages-deploy-action-temp-deployment-folder
-          # Copy the build files to the deployment folder
-          cp -r ../build/* .
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
           git add .
-          git commit -m "Deploying to gh-pages from @ ${{ github.repository }}@${{ github.sha }} 🚀 --quiet --no-verify"
-          git push --force origin github-pages-deploy-action/v5ehlleed:gh-pages
+          git commit -m "Deploying to gh-pages"
+          git push --force https://github.com/${{ github.repository }} HEAD:gh-pages
