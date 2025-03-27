@@ -25,7 +25,7 @@ jobs:
         run: |
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git config --global user.name "github-actions[bot]"
-          git remote set-url origin https://<your-username>:${GH_PAT}@github.com/acakanel/goit-js-hw-11.git
+          git remote set-url origin https://acakanel:${GH_PAT}@github.com/acakanel/goit-js-hw-11.git
           git fetch
           git worktree add gh-pages-deploy-action github-pages-deploy-action-temp-deployment-folder
           cd github-pages-deploy-action-temp-deployment-folder
