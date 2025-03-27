@@ -2,22 +2,35 @@ name: Build and deploy to GitHub Pages
 
 on:
   push:
-    branches: [main]
+    branches:
+      - main
 
 jobs:
-  build-and-deploy:
+  build-deploy:
     runs-on: ubuntu-latest
-    steps:
-      - name: Checkout 🛎️
-        uses: actions/checkout@v2.3.1
 
-      - name: Install and build 🔧
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Build project
         run: |
+          # Your build commands here
           npm install
           npm run build
 
-      - name: Deploy 🚀
-        uses: JamesIves/github-pages-deploy-action@4.1.0
-        with:
-          branch: gh-pages
-          folder: dist
+      - name: Deploy to GitHub Pages
+        env:
+          GH_PAT: ${{ secrets.GH_PAT }}
+        run: |
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions[bot]"
+          git remote set-url origin https://<your-username>:${GH_PAT}@github.com/acakanel/goit-js-hw-11.git
+          git fetch
+          git worktree add gh-pages-deploy-action github-pages-deploy-action-temp-deployment-folder
+          cd github-pages-deploy-action-temp-deployment-folder
+          # Copy the build files to the deployment folder
+          cp -r ../build/* .
+          git add .
+          git commit -m "Deploying to gh-pages from @ ${{ github.repository }}@${{ github.sha }} 🚀 --quiet --no-verify"
+          git push --force origin github-pages-deploy-action/v5ehlleed:gh-pages
